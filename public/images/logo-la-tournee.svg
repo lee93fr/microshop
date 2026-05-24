@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Bouteille stylisée -->
+  <g transform="translate(68, 10)">
+    <!-- Col bouteille -->
+    <rect x="22" y="0" width="20" height="6" rx="3" fill="#4F46E5"/>
+    <rect x="18" y="6" width="28" height="10" rx="2" fill="#4F46E5"/>
+    <!-- Corps bouteille -->
+    <path d="M14 16 C8 22 6 30 6 38 L6 100 C6 106 11 110 18 110 L46 110 C53 110 58 106 58 100 L58 38 C58 30 56 22 50 16 Z" fill="#4F46E5"/>
+    <!-- Reflet sur bouteille -->
+    <path d="M18 22 C14 28 13 34 13 40 L13 90 C13 93 14 95 16 96 L16 40 C16 34 17 28 20 22 Z" fill="white" fill-opacity="0.15"/>
+    <!-- Étiquette -->
+    <rect x="10" y="48" width="44" height="36" rx="4" fill="white" fill-opacity="0.25"/>
+    <!-- Lettre L sur étiquette -->
+    <text x="24" y="73" font-family="Georgia, serif" font-size="22" font-weight="bold" fill="white" fill-opacity="0.9">L</text>
+  </g>
+  <!-- Chemin circulaire (la tournée = la ronde) -->
+  <path d="M100 165 C60 165 28 140 20 105" stroke="#4F46E5" stroke-width="3.5" stroke-linecap="round" fill="none" stroke-dasharray="6 4" opacity="0.5"/>
+  <path d="M100 165 C140 165 172 140 180 105" stroke="#4F46E5" stroke-width="3.5" stroke-linecap="round" fill="none" stroke-dasharray="6 4" opacity="0.5"/>
+  <!-- Flèche droite -->
+  <path d="M176 108 L182 104 L176 100" stroke="#4F46E5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.6"/>
+</svg>

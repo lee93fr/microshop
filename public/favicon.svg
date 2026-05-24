@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Bouteille -->
+  <rect x="12" y="1" width="8" height="3" rx="1.5" fill="#4F46E5"/>
+  <rect x="11" y="4" width="10" height="4" rx="1" fill="#4F46E5"/>
+  <path d="M8 8 C5 11 4 15 4 18 L4 27 C4 29 6 31 9 31 L23 31 C26 31 28 29 28 27 L28 18 C28 15 27 11 24 8 Z" fill="#4F46E5"/>
+  <rect x="6" y="15" width="20" height="11" rx="2" fill="white" fill-opacity="0.2"/>
+  <path d="M9 9 C7 12 6.5 15 6.5 18 L6.5 27 C6.5 28 7 29 8 29.5 L8 18 C8 15 8.5 12 10 9 Z" fill="white" fill-opacity="0.2"/>
+</svg>
