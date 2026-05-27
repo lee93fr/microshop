@@ -9,32 +9,102 @@
 @section('content')
 <div class="space-y-4">
 
+    {{-- Bannière lien d'invitation généré --}}
+    @if(session('invitation_link'))
+    <div id="invitation-link-banner" class="card p-5 border-l-4 border-green-400 bg-green-50">
+        <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-semibold text-green-800 mb-1">
+                    ✓ {{ session('success') }}
+                </p>
+                <p class="text-xs text-green-700 mb-3">
+                    Partagez ce lien avec <strong>{{ session('invitation_name') }}</strong> pour qu'il/elle puisse créer son compte :
+                </p>
+                <div class="flex items-center gap-2">
+                    <input
+                        id="generated-link-input"
+                        type="text"
+                        value="{{ session('invitation_link') }}"
+                        readonly
+                        class="flex-1 text-xs font-mono bg-white border border-green-300 rounded-lg px-3 py-2 text-gray-700 select-all focus:outline-none focus:ring-2 focus:ring-green-400"
+                        onclick="this.select()"
+                    >
+                    <button
+                        type="button"
+                        onclick="copyInvitationLink('generated-link-input', this)"
+                        class="flex-shrink-0 inline-flex items-center gap-1.5 text-xs px-4 py-2 rounded-lg font-medium bg-green-600 text-white hover:bg-green-700 transition-colors"
+                    >
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        Copier le lien
+                    </button>
+                </div>
+            </div>
+            <button type="button" onclick="document.getElementById('invitation-link-banner').remove()" class="text-green-500 hover:text-green-700 flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    @elseif(session('success'))
+    <div class="card p-4 border-l-4 border-green-400 bg-green-50">
+        <p class="text-sm text-green-800">✓ {{ session('success') }}</p>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="card p-4 border-l-4 border-red-400 bg-red-50">
+        <p class="text-sm text-red-800">✗ {{ session('error') }}</p>
+    </div>
+    @endif
+
     {{-- Panneau d'invitation --}}
     <div id="invite-panel" class="hidden card p-6 border-l-4 border-indigo-400">
         <h3 class="font-semibold text-gray-900 mb-4">Inviter un nouvel utilisateur</h3>
-        <form method="POST" action="{{ route('admin.users.invite') }}" class="flex flex-wrap gap-3 items-end">
+        <form method="POST" action="{{ route('admin.users.invite') }}" class="space-y-4">
             @csrf
-            <div class="flex-1 min-w-44">
-                <label class="form-label">Nom complet *</label>
-                <input type="text" name="name" value="{{ old('name') }}" required class="form-input" placeholder="Jean Dupont">
-                @error('name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+            <div class="flex flex-wrap gap-3 items-end">
+                <div class="flex-1 min-w-44">
+                    <label class="form-label">Nom complet *</label>
+                    <input type="text" name="name" value="{{ old('name') }}" required class="form-input" placeholder="Jean Dupont">
+                    @error('name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                </div>
+                <div class="flex-1 min-w-52">
+                    <label class="form-label">Adresse email *</label>
+                    <input type="email" name="email" value="{{ old('email') }}" required class="form-input" placeholder="jean@exemple.fr">
+                    @error('email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                </div>
+                <div>
+                    <label class="form-label">Rôle *</label>
+                    <select name="role" class="form-input">
+                        <option value="client"      @selected(old('role','client') === 'client')>Client</option>
+                        <option value="fournisseur" @selected(old('role') === 'fournisseur')>Fournisseur</option>
+                        <option value="admin"       @selected(old('role') === 'admin')>Admin</option>
+                    </select>
+                    @error('role')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                </div>
             </div>
-            <div class="flex-1 min-w-52">
-                <label class="form-label">Adresse email *</label>
-                <input type="email" name="email" value="{{ old('email') }}" required class="form-input" placeholder="jean@exemple.fr">
-                @error('email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-            </div>
-            <div>
-                <label class="form-label">Rôle *</label>
-                <select name="role" class="form-input">
-                    <option value="client"      @selected(old('role','client') === 'client')>Client</option>
-                    <option value="fournisseur" @selected(old('role') === 'fournisseur')>Fournisseur</option>
-                    <option value="admin"       @selected(old('role') === 'admin')>Admin</option>
-                </select>
-                @error('role')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-            </div>
-            <div class="flex gap-2">
-                <button type="submit" class="btn-primary">Envoyer l'invitation</button>
+            <div class="flex flex-wrap gap-2 items-center pt-1 border-t border-gray-100">
+                {{-- Bouton : envoyer l'email + générer le lien --}}
+                <button type="submit" name="action" value="send" class="btn-primary inline-flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    Envoyer l'invitation par email
+                </button>
+                {{-- Bouton : générer le lien sans envoyer d'email --}}
+                <button type="submit" name="action" value="link"
+                        class="inline-flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                    </svg>
+                    Générer le lien seulement
+                </button>
                 <button type="button" onclick="toggleInvitePanel()" class="btn-secondary">Annuler</button>
             </div>
         </form>
@@ -184,7 +254,12 @@
                                 @if($user->invitation_token)
                                     <button type="button"
                                             data-copy-link="{{ route('invitation.show', $user->invitation_token) }}"
-                                            class="text-xs px-3 py-1.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors">
+                                            onclick="copyLinkFromAttr(this)"
+                                            class="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg font-medium bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                        </svg>
                                         Copier le lien
                                     </button>
                                     <form method="POST" action="{{ route('admin.users.reinvite', $user) }}" class="inline">
@@ -278,6 +353,16 @@
     </div>
 </div>
 
+{{-- Toast notification copie --}}
+<div id="copy-toast" class="fixed bottom-6 right-6 z-50 hidden">
+    <div class="flex items-center gap-2 bg-gray-900 text-white text-sm px-4 py-3 rounded-xl shadow-lg">
+        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+        </svg>
+        Lien copié dans le presse-papiers !
+    </div>
+</div>
+
 <script>
 let debounceTimer;
 function debounceFilter() {
@@ -312,5 +397,69 @@ document.addEventListener('DOMContentLoaded', () => {
     if (panel) panel.classList.remove('hidden');
 });
 @endif
+
+// ──────────────────────────────────────────────
+//  Copier un lien dans le presse-papiers
+// ──────────────────────────────────────────────
+
+function showCopyToast() {
+    const toast = document.getElementById('copy-toast');
+    toast.classList.remove('hidden');
+    clearTimeout(window._copyToastTimer);
+    window._copyToastTimer = setTimeout(() => toast.classList.add('hidden'), 2500);
+}
+
+/**
+ * Copie la valeur d'un <input readonly> identifié par son id.
+ * Met à jour le texte du bouton brièvement.
+ */
+function copyInvitationLink(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+    navigator.clipboard.writeText(input.value).then(() => {
+        showCopyToast();
+        if (btn) {
+            const original = btn.innerHTML;
+            btn.innerHTML = '✓ Copié !';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }, 2000);
+        }
+    }).catch(() => {
+        // Fallback pour les navigateurs plus anciens
+        input.select();
+        document.execCommand('copy');
+        showCopyToast();
+    });
+}
+
+/**
+ * Copie le lien depuis l'attribut data-copy-link du bouton dans le tableau.
+ */
+function copyLinkFromAttr(btn) {
+    const url = btn.getAttribute('data-copy-link');
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => {
+        showCopyToast();
+        const original = btn.innerHTML;
+        btn.innerHTML = '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg> Copié !';
+        btn.disabled = true;
+        setTimeout(() => {
+            btn.innerHTML = original;
+            btn.disabled = false;
+        }, 2000);
+    }).catch(() => {
+        // Fallback
+        const tmp = document.createElement('textarea');
+        tmp.value = url;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+        showCopyToast();
+    });
+}
 </script>
 @endsection

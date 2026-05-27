@@ -32,9 +32,24 @@ class InvitationController extends Controller
             'invitation_sent_at' => now(),
         ]);
 
-        $this->sendInvitationEmail($user);
+        $url = route('invitation.show', $user->invitation_token);
 
-        return back()->with('success', "Invitation envoyée à {$user->email}.");
+        // Action : 'send' envoie l'email + affiche le lien, 'link' affiche le lien uniquement
+        $action = $request->input('action', 'send');
+
+        if ($action === 'send') {
+            $this->sendInvitationEmail($user);
+            return back()
+                ->with('success', "Invitation envoyée à {$user->email}.")
+                ->with('invitation_link', $url)
+                ->with('invitation_name', $user->name);
+        }
+
+        // Génération du lien sans envoi d'email
+        return back()
+            ->with('success', "Lien d'invitation généré pour {$user->email}.")
+            ->with('invitation_link', $url)
+            ->with('invitation_name', $user->name);
     }
 
     public function resend(User $user)
@@ -47,7 +62,12 @@ class InvitationController extends Controller
 
         $this->sendInvitationEmail($user);
 
-        return back()->with('success', "Invitation renvoyée à {$user->email}.");
+        $url = route('invitation.show', $user->invitation_token);
+
+        return back()
+            ->with('success', "Invitation renvoyée à {$user->email}.")
+            ->with('invitation_link', $url)
+            ->with('invitation_name', $user->name);
     }
 
     private function sendInvitationEmail(User $user): void
